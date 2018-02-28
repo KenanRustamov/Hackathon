@@ -6,7 +6,7 @@ import Meteor
 import SkyColor
 import random
 import Cloud
-import customButton
+import pygbutton
 from pygame.locals import*
 #gitHu
 pygame.init()
@@ -58,7 +58,6 @@ pygame.font.init()
 height_font = pygame.font.SysFont("Courier", 20)
 text_height = height_font.render("Height: {0}".format(rocket.getHeight()),False,(0,0,0))
 
-
 def resetGame(rocket):
     global blue_Shift
     color.resetSkyColor()
@@ -72,6 +71,33 @@ def resetGame(rocket):
 
 from graphics import *
 
+def newMainMenu():
+    gameDisplay.fill((0, 0, 0))
+    playNow = pygbutton.PygButton((display_width/2 - 80/2 - 10,200,100,40) , 'Play Now', black)
+    shop = pygbutton.PygButton((display_width/2 - 80/2 - 10,240,100,40) , 'Shop', black)
+    exit = pygbutton.PygButton((display_width/2 - 80/2 - 10,280,100,40) , 'Exit', black)
+    titleFont = pygame.font.SysFont('freesansbold', 50)
+    title = titleFont.render('League Of Rockets', False, (255,255,255))
+
+
+    while(True):
+        for event in pygame.event.get():
+            if(event.type == pygame.QUIT):
+                quit()
+            if 'click' in playNow.handleEvent(event):
+                return 'start'
+            if 'click' in exit.handleEvent(event):
+                quit()
+            if ' click' in shop.handleEvent(event):
+                shop()
+        gameDisplay.fill((0, 0, 0))
+        gameDisplay.blit(title,(50, 100))
+        playNow.draw(gameDisplay)
+        shop.draw(gameDisplay)
+        exit.draw(gameDisplay)
+        pygame.display.update()
+
+'''PREVIOUS MAIN MENU METHOD
 def mainMenu():
     win=GraphWin('League of Rockets', 400, 400)
     win.setBackground('black')
@@ -110,46 +136,7 @@ def mainMenu():
                 if (xval<380) and (xval>210):
                     win.close()
                     return 'shop'
-
-def mainMenu():
-    win=GraphWin('League of Rockets', 400, 400)
-    win.setBackground('black')
-    bgPic=Image(Point(200,150),"myrocket.png")
-    bgPic.draw(win)
-    startRec=Rectangle(Point(20,275),Point(190,375))
-    startRec.setFill('cyan')
-    startRec.draw(win)
-    shopRec=Rectangle(Point(210,275),Point(380,375))
-    shopRec.setFill('red')
-    shopRec.draw(win)
-    startMess=Text(Point(105,325),'Take Off')
-    startMess.setStyle('bold')
-    startMess.setSize(24)
-    startMess.draw(win)
-    shopMess=Text(Point(295,325),'Quit')
-    shopMess.setStyle('bold')
-    shopMess.setSize(24)
-    shopMess.draw(win)
-    mainMenuMess=Text(Point(200,25),'League of Rockets')
-    mainMenuMess.setSize(28)
-    mainMenuMess.setStyle('bold')
-    mainMenuMess.setTextColor('white')
-    mainMenuMess.setFace('courier')
-    mainMenuMess.draw(win)
-    while True:
-        p=win.checkMouse()
-        if p!=None:
-            xval=p.getX()
-            yval=p.getY()
-            if (yval<375) and (yval>275):
-                if (xval<190) and (xval>20):
-                    win.close()
-                    return 'start'
-                # TODO
-                if (xval<380) and (xval>210):
-                    win.close()
-                    return 'shop'
-
+'''
 def pause():
     paused = True
     while(paused):
@@ -171,8 +158,9 @@ def gameLoop():
 
     userWantsToExit = True
     starBool = False
+    newMainMenu()
 
-    if mainMenu() == 'start':
+    if newMainMenu() == 'start':
         userWantsToExit = False
 
     while userWantsToExit == False:

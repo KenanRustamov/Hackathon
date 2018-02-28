@@ -1,4 +1,5 @@
 import pygame
+import math
 from pygame.locals import *
 
 pygame.font.init()
@@ -23,9 +24,11 @@ class PygButton():
 		self._fgcolor = fgcolor
 
 		if font is None:
-			self._font = PYGBUTTON_FONT
+			self._font = pygame.font.Font('freesansbold.ttf', int(math.sqrt(rect[2]**2 + rect[3]**2)/6))
+			#self._font = pygame.font.Font('freesansbold.ttf', 16)
 		else:
-			self._font = font
+			#self._font = pygame.font.Font('freesansbold.ttf', int(math.sqrt(rect[2]**2 + rect[3]**2)))
+			self._font = pygame.font.Font('freesansbold.ttf', 10)
 
 		# tracks the state of the button
 		self.buttonDown = False # is the button currently pushed down?
@@ -148,11 +151,15 @@ class PygButton():
 
 
 	def mouseClick(self, event):
-		self.x = 0
+		self.fgcolor = (255, 0 ,0)
 	def mouseEnter(self, event):
 		self.fgcolor = WHITE
+		self.font.set_bold(True)
+		#PygButton._update(self)
 	def mouseExit(self, event):
 		self.fgcolor = LIGHTGRAY
+		self.font.set_bold(False)
+		#PygButton._update(self)
 	def mouseMove(self, event):
 		self.x = 0
 	def mouseDown(self, event):
