@@ -68,6 +68,7 @@ def resetGame(rocket):
 
     for x in range(0, 9):
         clouds[x] = Cloud.Cloud('cloud.png', 60, 40)
+        clouds[x].setStarBool(False)
 
 from graphics import *
 
@@ -184,7 +185,7 @@ def gameLoop():
 
             gameDisplay.fill(color.shift(rocket.getHeight()))
             for cloud in clouds:
-                cloud.updateCloud(rocket.getSpeed(), display_height, display_width,gameDisplay)
+                cloud.updateCloud(rocket, display_height, display_width,gameDisplay)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -214,10 +215,6 @@ def gameLoop():
 
             rocket.updateHeight()
 
-            if(rocket.getHeight() > 10000 and starBool != True):
-                for i in range(0, len(clouds)):
-                    clouds[i].setImage('star.png', 20, 20) 
-                starBool = True
 
             pygame.draw.ellipse(gameDisplay, (0,0,0), (rocket.getPos_x(), rocket.getPos_y(), rocket.getWidth(), rocket.getLength()), 2)
             pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x() + rocket.getWidth()/2 - 1, rocket.getPos_y(), 1, rocket.getLength()), 1)

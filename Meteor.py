@@ -39,7 +39,7 @@ class Meteor():
         meteor_hit_points = [(self.x + self.width / 2, self.y + self.length), (self.x + self.width, self.y), 
             (self.x, self.y + self.length), (self.x + self.width, self.y + self.length), (self.x, self.y)]
         for meteorHitPoint in meteor_hit_points:
-            if(((((meteorHitPoint[0] - (rocket.getPos_x() + rocket.getWidth()/2 - 1))**2)/(rocket.getWidth()/2)) + (((meteorHitPoint[1] - (rocket.getPos_y() + rocket.getLength()/2))**2)/(rocket.getLength()/2))) <= 1):
+            if(((((meteorHitPoint[0] - (rocket.getPos_x() + rocket.getWidth()/2 - 1))**2)/(rocket.getWidth()/2)**2) + (((meteorHitPoint[1] - (rocket.getPos_y() + rocket.getLength()/2))**2)/(rocket.getLength()/2)**2)) <= 1):
                 return True
 
         return False

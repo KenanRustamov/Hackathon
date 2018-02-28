@@ -1,7 +1,7 @@
 
 class Rocket():
 
-    def __init__(self, pos_x, pos_y, rocketWidth, rocketLength, speed = 0, steer = 2, maxFuel = 500, height = 0, weight = 10000):
+    def __init__(self, pos_x, pos_y, rocketWidth, rocketLength, speed = 0, steer = 2, maxFuel = 500, height = 9950, weight = 10000):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.speed = speed
@@ -24,7 +24,7 @@ class Rocket():
 
     def resetRocket(self,rocketParameters):
         self.speed = 0
-        self.height = 0
+        self.height = 9950
         self.pos_x = self.start_x
         self.pos_y = self.start_y
         self.time = 0
