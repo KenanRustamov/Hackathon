@@ -45,6 +45,7 @@ rocket = Rocket.Rocket(display_width/2 - rocket_width/2, display_height - (displ
 color = SkyColor.SkyColor()
 FPS = 30
 font = pygame.font.SysFont(None, 25)
+
 meteors = [0, 0, 0, 0, 0]
 for meteor in meteors:
     meteor = Meteor.Meteor()
@@ -55,7 +56,6 @@ for x in range(0, 9):
 
 pygame.font.init()
 height_font = pygame.font.SysFont("Courier", 20)
-
 text_height = height_font.render("Height: {0}".format(rocket.getHeight()),False,(0,0,0))
 
 
@@ -161,7 +161,7 @@ def pause():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     paused = False
-                    break;
+                    break
             #else:
                 #myButton.handleEvent(event)
 
@@ -178,7 +178,6 @@ def gameLoop():
 
         roundOver = False
         x_change = 0
-        print(rocket.getHeight())
         resetGame(rocket)
 
         while not roundOver:
@@ -211,32 +210,25 @@ def gameLoop():
 
             if (rocket.getPos_x() + x_change) < display_width - rocket_width and (rocket.getPos_x() + x_change) > 0:
                 rocket.updateX(x_change)
-            gameDisplay.blit(img,(rocket.getPos_x() - 25, rocket.getPos_y()))
+            gameDisplay.blit(img,(rocket.getPos_x() - 26, rocket.getPos_y() - 3))
 
             rocket.updateHeight()
 
             if(rocket.getHeight() > 10000 and starBool != True):
                 for i in range(0, len(clouds)):
-                    clouds[i].setImage('star.png', 20, 20)
+                    clouds[i].setImage('star.png', 20, 20) 
                 starBool = True
 
-            #pygame.draw.rect(gameDisplay, (150, 150, 150), pygame.Rect(0, 475, display_width, 200))
+            pygame.draw.ellipse(gameDisplay, (0,0,0), (rocket.getPos_x(), rocket.getPos_y(), rocket.getWidth(), rocket.getLength()), 2)
+            pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x() + rocket.getWidth()/2 - 1, rocket.getPos_y(), 1, rocket.getLength()), 1)
+            pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x(), rocket.getPos_y() + rocket.getLength()/2, rocket.getWidth(), 1), 1)
+            pygame.draw.rect(gameDisplay, (255,0,0), pygame.Rect(rocket.getPos_x() + rocket.getWidth()/2 -1, rocket.getPos_y() + rocket.getLength()/2, 1, 1), 1)
 
-            pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x(), rocket.getPos_y(), rocket_width, rocket_length), 2)
-            pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x(), rocket.getPos_y(), 1, 1), 0)
-            pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x() + rocket.getWidth(), rocket.getPos_y(), 1, 1), 0)
-            pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x() + rocket.getWidth(), rocket.getPos_y() + rocket.getLength(), 1, 1), 0)
-            pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x(), rocket.getPos_y() + rocket.getLength(), 1, 1), 0)
-
-            #pygame.display.update()
-
-            print(rocket.getSpeed())
             if (rocket.getSpeed() <= 0):
                 roundOver = True
                 resetGame(rocket) 
                 break
                 
-            #pygame.display.update()
             if rocket.getFuel() > 0:
                 fuelBarColor = (255 - int(rocket.getFuel()/rocket.getMaxFuel()*255), int(rocket.getFuel()/rocket.getMaxFuel()*255), 0)
             else:
@@ -257,7 +249,6 @@ def gameLoop():
 
             clock.tick(FPS)
         gameOverScreen()
-        print(rocket.getHeight())
         resetGame(rocket)
         print("GAME OVER")
     userWantsToExit = True

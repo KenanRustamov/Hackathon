@@ -10,9 +10,9 @@ DARKGRAY  = ( 64,  64,  64)
 GRAY      = (128, 128, 128)
 LIGHTGRAY = (212, 208, 200)
 
-class pygbutton():
+class PygButton():
 
-	def __init__(self, rect=None, caption='', bgcolor=LIGHTGRAY, fgcolor=BLACK, font=None, normal=None, down=None, highlight=None):
+	def __init__(self, rect=None, caption='', bgcolor=BLACK, fgcolor=LIGHTGRAY, font=None, normal=None, down=None, highlight=None):
 		if rect is None:
 			self._rect = pygame.Rect(20, 20, 30, 60)
 		else:
@@ -76,7 +76,7 @@ class pygbutton():
 		self.surfaceDown.blit(captionSurf, captionRect)
 
 		# draw border for normal button
-		pygame.draw.rect(self.surfaceNormal, BLACK, pygame.Rect((0, 0, w, h)), 1) # black border around everything
+		'''pygame.draw.rect(self.surfaceNormal, BLACK, pygame.Rect((0, 0, w, h)), 1) # black border around everything
 		pygame.draw.line(self.surfaceNormal, WHITE, (1, 1), (w - 2, 1))
 		pygame.draw.line(self.surfaceNormal, WHITE, (1, 1), (1, h - 2))
 		pygame.draw.line(self.surfaceNormal, DARKGRAY, (1, h - 1), (w - 1, h - 1))
@@ -91,7 +91,7 @@ class pygbutton():
 		pygame.draw.line(self.surfaceDown, DARKGRAY, (1, h - 2), (1, 1))
 		pygame.draw.line(self.surfaceDown, DARKGRAY, (1, 1), (w - 2, 1))
 		pygame.draw.line(self.surfaceDown, GRAY, (2, h - 3), (2, 2))
-		pygame.draw.line(self.surfaceDown, GRAY, (2, 2), (w - 3, 2))
+		pygame.draw.line(self.surfaceDown, GRAY, (2, 2), (w - 3, 2))'''
 
 		# draw border for highlight button
 		self.surfaceHighlight = self.surfaceNormal
@@ -150,9 +150,9 @@ class pygbutton():
 	def mouseClick(self, event):
 		self.x = 0
 	def mouseEnter(self, event):
-		self.x = 0
+		self.fgcolor = WHITE
 	def mouseExit(self, event):
-		self.x = 0
+		self.fgcolor = LIGHTGRAY
 	def mouseMove(self, event):
 		self.x = 0
 	def mouseDown(self, event):
