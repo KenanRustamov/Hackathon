@@ -5,7 +5,7 @@ import Rocket
 import Meteor
 import SkyColor
 import random
-import Cloud
+import BackgroundObject
 import pygbutton
 from pygame.locals import*
 #gitHu
@@ -21,6 +21,8 @@ def message_to_screen(msg,color):
 
 # GLOBAL VARIABLES DO NOT TOUCH
 
+maxVelocity = 0
+maxHeight = 0
 upgradeLevels=[0,0,0,0,0,0]
 rocketValues=[1000,500,300,12000,1,1]
 white = (255,255,255)
@@ -50,15 +52,18 @@ meteors = [0, 0, 0, 0, 0]
 for meteor in meteors:
     meteor = Meteor.Meteor()
 
-clouds = [0,0,0,0,0,0,0,0,0]
+backGroundObjects = [0,0,0,0,0,0,0,0,0]
 for x in range(0, 9):
-    clouds[x] = Cloud.Cloud('cloud.png', 60, 40)
+    backGroundObjects[x] = BackgroundObject.BackgroundObject('cloud.png', 60, 40)
 
 pygame.font.init()
 height_font = pygame.font.SysFont("Courier", 20)
 text_height = height_font.render("Height: {0}".format(rocket.getHeight()),False,(0,0,0))
 
 def resetGame(rocket):
+    global maxHeight
+    global maxVelocity
+    maxVelocity = 0
     global blue_Shift
     color.resetSkyColor()
     rocket.resetRocket(rocketValues)
@@ -66,35 +71,38 @@ def resetGame(rocket):
         meteors[x] = Meteor.Meteor()
 
     for x in range(0, 9):
-        clouds[x] = Cloud.Cloud('cloud.png', 60, 40)
-        clouds[x].setStarBool(False)
+        backGroundObjects[x] = BackgroundObject.BackgroundObject('cloud.png', 60, 40)
+        backGroundObjects[x].setStarBool(False)
 
 from graphics import *
 
 def newMainMenu():
+    global rocketValues
+    global upgradeLevels
     gameDisplay.fill((0, 0, 0))
-    playNow = pygbutton.PygButton((display_width/2 - 80/2 - 10,200,100,40) , 'Play Now', black)
-    shop = pygbutton.PygButton((display_width/2 - 80/2 - 10,240,100,40) , 'Shop', black)
-    exit = pygbutton.PygButton((display_width/2 - 80/2 - 10,280,100,40) , 'Exit', black)
+    playNowButton = pygbutton.PygButton((display_width/2 - 80/2 - 10,200,100,40) , 'Play Now', black)
+    shopButton = pygbutton.PygButton((display_width/2 - 80/2 - 10,240,100,40) , 'Shop', black)
+    exitButton = pygbutton.PygButton((display_width/2 - 80/2 - 10,280,100,40) , 'Exit', black)
     titleFont = pygame.font.SysFont('freesansbold', 50)
     title = titleFont.render('League Of Rockets', False, (255,255,255))
-
 
     while(True):
         for event in pygame.event.get():
             if(event.type == pygame.QUIT):
                 quit()
-            if 'click' in playNow.handleEvent(event):
+            if 'click' in playNowButton.handleEvent(event):
                 return 'start'
-            if 'click' in exit.handleEvent(event):
+            if 'click' in exitButton.handleEvent(event):
                 quit()
-            if ' click' in shop.handleEvent(event):
-                shop()
+            if 'click' in shopButton.handleEvent(event):
+                upgradeLevels, rocketValues, tempMoney = shop(rocket.getPoints(),upgradeLevels)
+                rocket.setPoints(tempMoney)
+
         gameDisplay.fill((0, 0, 0))
         gameDisplay.blit(title,(50, 100))
-        playNow.draw(gameDisplay)
-        shop.draw(gameDisplay)
-        exit.draw(gameDisplay)
+        playNowButton.draw(gameDisplay)
+        shopButton.draw(gameDisplay)
+        exitButton.draw(gameDisplay)
         pygame.display.update()
 
 '''PREVIOUS MAIN MENU METHOD
@@ -155,10 +163,12 @@ def pause():
 
 
 def gameLoop():
-
+    global maxVelocity
+    global maxHeight
+    global rocketValues
+    global upgradeLevels
     userWantsToExit = True
     starBool = False
-    newMainMenu()
 
     if newMainMenu() == 'start':
         userWantsToExit = False
@@ -172,8 +182,8 @@ def gameLoop():
         while not roundOver:
 
             gameDisplay.fill(color.shift(rocket.getHeight()))
-            for cloud in clouds:
-                cloud.updateCloud(rocket, display_height, display_width,gameDisplay)
+            for backGroundObject in backGroundObjects:
+                backGroundObject.updateBackgroundObject(rocket, display_height, display_width,gameDisplay)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -188,28 +198,33 @@ def gameLoop():
                 else:
                     x_change = 0
 
-
             if not roundOver:
                 for meteor in meteors:
-                    if meteor.collision(rocket):
+                    if meteor.collision(gameDisplay,rocket):
                         pause()
                         roundOver = True
                     meteor.updateMeteor(rocket.getSpeed(), display_height, display_width, rocket, rocketValues)
-                    gameDisplay.blit(meteor_img,(meteor.getX(), meteor.getY()))
+                    gameDisplay.blit(meteor_img,(meteor.getX()- 6, meteor.getY() - 2))
 
             if (rocket.getPos_x() + x_change) < display_width - rocket_width and (rocket.getPos_x() + x_change) > 0:
                 rocket.updateX(x_change)
             gameDisplay.blit(img,(rocket.getPos_x() - 26, rocket.getPos_y() - 3))
 
             rocket.updateHeight()
+            currentVelocity = rocket.getSpeed()
+            if(currentVelocity > maxVelocity):
+                maxVelocity = currentVelocity
 
+            currentHeight = rocket.getHeight()
+            if(currentHeight > maxHeight):
+                maxHeight = currentHeight
 
             pygame.draw.ellipse(gameDisplay, (0,0,0), (rocket.getPos_x(), rocket.getPos_y(), rocket.getWidth(), rocket.getLength()), 2)
             pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x() + rocket.getWidth()/2 - 1, rocket.getPos_y(), 1, rocket.getLength()), 1)
             pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x(), rocket.getPos_y() + rocket.getLength()/2, rocket.getWidth(), 1), 1)
             pygame.draw.rect(gameDisplay, (255,0,0), pygame.Rect(rocket.getPos_x() + rocket.getWidth()/2 -1, rocket.getPos_y() + rocket.getLength()/2, 1, 1), 1)
 
-            if (rocket.getSpeed() <= 0):
+            if (currentVelocity <= 0):
                 roundOver = True
                 resetGame(rocket) 
                 break
@@ -221,24 +236,59 @@ def gameLoop():
             pygame.draw.rect(gameDisplay, black, pygame.Rect(100, 500, 200, 10), 2)
             SingleColorBar(gameDisplay, fuelBarColor, rocket.getFuel(), rocket.getMaxFuel(), 200)
             myfont = pygame.font.SysFont('Comic Sans', 25)
-            velocity = myfont.render('Curret Velocity : '  + str(int(rocket.getSpeed())) + ' m/s', False, (255,0,0))
-            acceleration = myfont.render('Curret Acceleration : '  + str(int(rocket.getAcceleration())) + ' m/s^2', False, (255,0,0))
-            height = myfont.render('Curret Height : '  + str(int(rocket.getHeight())) + ' m', False, (255,0,0))
+            velocity = myfont.render('Curret Velocity : '  + str(int(currentVelocity)) + ' m/s', False, (255,0,0))
+            acceleration = myfont.render('Curret Acceleration : '  + str(int(rocket.getAcceleration())) + ' m/s\u00b2', False, (255,0,0))
+            height = myfont.render('Curret Height : '  + str(int(currentHeight)) + ' m', False, (255,0,0))
             gameDisplay.blit(height,(display_width/2 - 80, 520))
             gameDisplay.blit(velocity,(display_width / 2 - 85,540))
             gameDisplay.blit(acceleration,(display_width / 2 - 110,560))
             pygame.display.update()
 
-            text_height = height_font.render('Height: {0}'.format(rocket.getHeight()),False,(0,0,0))
+            text_height = height_font.render('Height: {0}'.format(currentHeight),False,(0,0,0))
             gameDisplay.blit(text_height, (0,0))
 
             clock.tick(FPS)
-        gameOverScreen()
+        descision = newGameOverScreen(maxHeight, maxVelocity)
+        if(descision == 'Main Menu'):
+            newMainMenu()
+        if(descision == 'Shop'):
+            print('shop')
+            upgradeLevels, rocketValues, tempMoney = shop(rocket.getPoints(),upgradeLevels)
+            rocket.setPoints(tempMoney)
         resetGame(rocket)
         print("GAME OVER")
     userWantsToExit = True
 
 # GAME OVER
+
+def newGameOverScreen(maxH, maxV):
+    global rocketValues
+    global upgradeLevels
+    gameDisplay.fill(pygame.Color("black"))
+    mainMenuButton = pygbutton.PygButton((40,display_height - 40,100,40) , 'Main Menu', black)
+    shopButton = pygbutton.PygButton((display_width - 120,display_height - 40,100,40) , 'Shop', black)
+    titleFont = pygame.font.SysFont('freesansbold', 50)
+    title = titleFont.render('Game Over!', False, (255,255,255))
+    statisticsFont = pygame.font.SysFont('freesansbold', 25)
+    maxHeightText = statisticsFont.render('Highest Height Reached: ' + str(int(maxH)) + ' m', False, (255,255,255))
+    maxVelocityText = statisticsFont.render('Highest Speed Reached: ' + str(int(maxV)) + 'm/s' , False, (255,255,255))
+
+    while(True):
+        for event in pygame.event.get():
+            if(event.type == pygame.QUIT):
+                quit()
+            if 'click' in mainMenuButton.handleEvent(event):
+                return 'Main Menu'
+            if 'click' in shopButton.handleEvent(event):
+                return 'Shop'
+        gameDisplay.fill((0, 0, 0))
+        gameDisplay.blit(title,((display_width/2 - 200/2), 100))
+        gameDisplay.blit(maxHeightText,((display_width/2 - 110, 275)))
+        gameDisplay.blit(maxVelocityText,((display_width/2 - 110, 325)))
+        mainMenuButton.draw(gameDisplay)
+        shopButton.draw(gameDisplay)
+        pygame.display.update()
+
 
 def gameOverScreen():
     global rocketValues
@@ -258,12 +308,13 @@ def gameOverScreen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
-            
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
 
                 if mainMenuButton.collidepoint(mouse_pos):
                     mainMenu()
+
                 if shopButton.collidepoint(mouse_pos):
                     upgradeLevels, rocketValues, tempMoney = shop(rocket.getPoints(),upgradeLevels)
                     rocket.setPoints(tempMoney)
@@ -366,6 +417,7 @@ def shop(money, currentUpgrades):
             priceTextList.append(mess)
     while True:
         p=win.checkMouse()
+
         if p!=None:
             xval=p.getX()
             yval=p.getY()

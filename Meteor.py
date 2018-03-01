@@ -1,6 +1,6 @@
 import random
 import math
-
+import pygame
 
 class Meteor():
 
@@ -10,7 +10,7 @@ class Meteor():
         self.change_x = random.randint(-5, 5)
         self.change_y = 1
         self.length = 40
-        self.width = 40
+        self.width = 25
         
     def updateMeteor(self, speed, length, width, rocket, rocketValues):
         self.x += self.change_x
@@ -35,10 +35,16 @@ class Meteor():
 
         return False
 
-    def collision(self, rocket):
+    def collision(self, gameDisplay, rocket):
         meteor_hit_points = [(self.x + self.width / 2, self.y + self.length), (self.x + self.width, self.y), 
             (self.x, self.y + self.length), (self.x + self.width, self.y + self.length), (self.x, self.y)]
+
+        '''meteor_hit_points = [(self.x + self.width / 2, self.y + self.length), (self.x + self.width*(3/4), self.y - self.length/2), 
+            (self.x, self.y + self.length), (self.x + self.width, self.y + self.length), (self.x, self.y)]'''
         for meteorHitPoint in meteor_hit_points:
+            pygame.draw.rect(gameDisplay, (255,0,0), pygame.Rect(meteorHitPoint[0], meteorHitPoint[1], 1, 1), 2)
+            pygame.draw.rect(gameDisplay, (255,0,0), pygame.Rect(self.x, self.y, self.width, self.length), 2)
+
             if(((((meteorHitPoint[0] - (rocket.getPos_x() + rocket.getWidth()/2 - 1))**2)/(rocket.getWidth()/2)**2) + (((meteorHitPoint[1] - (rocket.getPos_y() + rocket.getLength()/2))**2)/(rocket.getLength()/2)**2)) <= 1):
                 return True
 

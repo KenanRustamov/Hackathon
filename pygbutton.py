@@ -152,14 +152,17 @@ class PygButton():
 
 	def mouseClick(self, event):
 		self.fgcolor = (255, 0 ,0)
+		
 	def mouseEnter(self, event):
 		self.fgcolor = WHITE
-		self.font.set_bold(True)
-		#PygButton._update(self)
-	def mouseExit(self, event):
-		self.fgcolor = LIGHTGRAY
 		self.font.set_bold(False)
 		#PygButton._update(self)
+
+	def mouseExit(self, event):
+		self.fgcolor = LIGHTGRAY
+		self.font.set_bold(True)
+		#PygButton._update(self)
+
 	def mouseMove(self, event):
 		self.x = 0
 	def mouseDown(self, event):
