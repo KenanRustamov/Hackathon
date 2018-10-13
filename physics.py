@@ -9,9 +9,9 @@ def wait(t):
 
 def rocket(v,h,t,Mr=100000,MfS=5000000,dmdt=500000,vM=1000,Cd=1):
     #earth constants
-    Re=6371000
-    Me=5.972*10**24
-    G=6.67408*10**-11
+    Re=6371000          #radius of earth
+    Me=5.972*10**24     #mass of earth
+    G=6.67408*10**-11   #gravitational constant
 
     #air density
     exponent=G*Me*.0289644/(8.3144*.0064)

@@ -35,6 +35,8 @@ gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Rockets')
 rocket_width = display_width // 5
 rocket_length = display_height // 6
+maxHull = 1
+hull = 1
 
 img = pygame.image.load('rock2.png')
 img = pygame.transform.scale(img, (rocket_width, rocket_length))
@@ -65,6 +67,9 @@ def resetGame(rocket):
     global maxVelocity
     maxVelocity = 0
     global blue_Shift
+    global maxHull
+    global hull
+    hull = maxHull
     color.resetSkyColor()
     rocket.resetRocket(rocketValues)
     for x in range(0, 5):
@@ -167,6 +172,10 @@ def gameLoop():
     global maxHeight
     global rocketValues
     global upgradeLevels
+    global hull
+    global maxHull
+    global meteorDeleted
+    meteorDeleted = False
     userWantsToExit = True
     starBool = False
 
@@ -201,10 +210,19 @@ def gameLoop():
             if not roundOver:
                 for meteor in meteors:
                     if meteor.collision(gameDisplay,rocket):
-                        pause()
-                        roundOver = True
-                    meteor.updateMeteor(rocket.getSpeed(), display_height, display_width, rocket, rocketValues)
-                    gameDisplay.blit(meteor_img,(meteor.getX()- 6, meteor.getY() - 2))
+                        #pause()
+                        hull = hull - 1
+                        meteors.remove(meteor)
+                        meteorDeleted = True
+                        if hull == 0:
+                        	roundOver = True
+                    if meteorDeleted == True:
+                    	meteors.append(Meteor.Meteor())
+                    meteorDeleted = False
+                    meteor.updateMeteor(gameDisplay, rocket.getSpeed(), display_height, display_width, rocket, rocketValues)
+                    gameDisplay.blit(meteor_img,(meteor.getX() - 6, meteor.getY() - 2))
+                    pygame.draw.rect(gameDisplay, (255,0,0), pygame.Rect(meteor.getX(), meteor.getY(), meteor.getWidth(), meteor.getLength()), 2)
+
 
             if (rocket.getPos_x() + x_change) < display_width - rocket_width and (rocket.getPos_x() + x_change) > 0:
                 rocket.updateX(x_change)
@@ -220,9 +238,6 @@ def gameLoop():
                 maxHeight = currentHeight
 
             pygame.draw.ellipse(gameDisplay, (0,0,0), (rocket.getPos_x(), rocket.getPos_y(), rocket.getWidth(), rocket.getLength()), 2)
-            pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x() + rocket.getWidth()/2 - 1, rocket.getPos_y(), 1, rocket.getLength()), 1)
-            pygame.draw.rect(gameDisplay, (0,0,0), pygame.Rect(rocket.getPos_x(), rocket.getPos_y() + rocket.getLength()/2, rocket.getWidth(), 1), 1)
-            pygame.draw.rect(gameDisplay, (255,0,0), pygame.Rect(rocket.getPos_x() + rocket.getWidth()/2 -1, rocket.getPos_y() + rocket.getLength()/2, 1, 1), 1)
 
             if (currentVelocity <= 0):
                 roundOver = True
@@ -391,6 +406,7 @@ def shop(money, currentUpgrades):
     currentHull.setSize(14)
     currentHull.setFace('courier')
     currentHull.draw(win)
+    global maxHull
     for i in range(2):
         for j in range(3):
             button=Rectangle(Point(290+260*i,200+100*j),Point(515+260*i,275+100*j))
@@ -530,6 +546,7 @@ def shop(money, currentUpgrades):
                             currentHull.setText(['Hull:','lvl',currentUpgrades[5]+1])
                             priceTextList[5].setText(['$',priceList[currentUpgrades[5]]])
                             moneyLine.setText(['Money:','$',"%.2f" %money])
+                            maxHull = maxHull + 1
                             m=massDecreaseList[currentUpgrades[3]]+massFuelList[currentUpgrades[0]]+massHull[currentUpgrades[5]]
                             currentMass.setText(['Mass:',m,'kg'])
                     elif currentUpgrades[5]==4:
