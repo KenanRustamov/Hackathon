@@ -14,9 +14,11 @@ Main Menu:
 
 <img src="https://github.com/KenanRustamov/League-of-Rockets/blob/master/LeagueOfRocketsMainMenu.gif" width=200><br>
 
+
 Shop:
 
 <img src="https://github.com/KenanRustamov/League-of-Rockets/blob/master/LeagueOfRocketsShop.gif" width=200><br>
+
 
 Playthrough:
 
