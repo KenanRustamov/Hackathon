@@ -6,7 +6,7 @@
   
 ### Goal
 
-  The goal is to manuever through the game dodging all of the meteors attempting to crash into your rocket to make it into space.  Choose the correct shop power-up's or you may be impeding your goal.
+  The goal is to manuever through the game dodging all of the meteors attempting to crash into your rocket to make it into space.  Choose the correct shop power-ups or you may be impeding your goal.
 
 ### App Walkthrough
 
